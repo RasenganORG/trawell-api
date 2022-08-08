@@ -3,17 +3,19 @@ const {
   addPropertyToRent,
   getAllPropertiesToRent,
   getPropertyToRent,
+  getPropertyByCountry,
   updatePropertyToRent,
   deletePropertyToRent,
 } = require("../controllers/propertyToRentController");
 
 const router = express.Router();
 
-router.post("/property_to_rent", addPropertyToRent);
-router.get("/properties_to_rent", getAllPropertiesToRent);
-router.get("/properties_to_rent/:id", getPropertyToRent);
-router.put("/properties_to_rent/:id", updatePropertyToRent);
-router.delete("/properties_to_rent/:id", deletePropertyToRent);
+router.post("/propertyToRent", addPropertyToRent);
+router.get("/propertiesToRent", getAllPropertiesToRent);
+router.get("/propertiesToRent/:country", getPropertyByCountry);
+router.get("/propertiesToRent/:id", getPropertyToRent);
+router.put("/propertiesToRent/:id", updatePropertyToRent);
+router.delete("/propertiesToRent/:id", deletePropertyToRent);
 
 module.exports = {
   routes: router,

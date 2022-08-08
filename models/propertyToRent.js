@@ -1,7 +1,8 @@
 class PropertyToRent {
   constructor(
     id,
-    propertyStyle,
+    rating,
+    placeType,
     propertyType,
     roomType,
     numberOfGuests,
@@ -9,12 +10,13 @@ class PropertyToRent {
     numberOfBeds,
     numberOfBathrooms,
     bathroomPrivate,
-    adress,
+    location,
     amenities,
     photos
   ) {
     this.id = id;
-    this.propertyStyle = propertyStyle;
+    this.rating = rating;
+    this.placeType = placeType;
     this.propertyType = propertyType;
     this.roomType = roomType;
     this.numberOfGuests = numberOfGuests;
@@ -22,7 +24,7 @@ class PropertyToRent {
     this.numberOfBeds = numberOfBeds;
     this.numberOfBathrooms = numberOfBathrooms;
     this.bathroomPrivate = bathroomPrivate;
-    this.adress = adress;
+    this.location = location;
     this.amenities = amenities;
     this.photos = photos;
   }

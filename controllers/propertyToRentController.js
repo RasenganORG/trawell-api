@@ -7,8 +7,16 @@ const firestore = firebase.firestore();
 const addPropertyToRent = async (req, res, next) => {
   try {
     const data = req.body;
-    await firestore.collection("propertiesToRent").doc().set(data);
-    res.send("Record saved successfuly");
+    const property = {
+      ...data,
+      id: firestore.collection("propertiesToRent").doc().id,
+    };
+    await firestore
+      .collection("propertiesToRent")
+      .doc(property.id)
+      .set(property);
+    // const id = req.params.id;
+    res.status(201).json(property);
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -23,20 +31,22 @@ const getAllPropertiesToRent = async (req, res, next) => {
       res.status(404).send("No property record found");
     } else {
       data.forEach((doc) => {
-        const propertieToRentArray = new propertieToRentArray(
+        const propertieToRent = new PropertyToRent(
           doc.id,
-          doc.data().propertyStyle,
+          doc.data().rating,
+          doc.data().placeType,
           doc.data().propertyType,
           doc.data().roomType,
           doc.data().numberOfGuests,
           doc.data().numberOfBedrooms,
           doc.data().numberOfBeds,
           doc.data().numberOfBathrooms,
-          doc.data().adress,
+          doc.data().bathroomPrivate,
+          doc.data().location,
           doc.data().amenities,
           doc.data().photos
         );
-        propertiesToRentArray.push(propertiesToRent);
+        propertiesToRentArray.push(propertieToRent);
       });
       res.send(propertiesToRentArray);
     }
@@ -59,6 +69,29 @@ const getPropertyToRent = async (req, res, next) => {
     }
   } catch (error) {
     res.status(400).send(error.message);
+  }
+};
+
+const getPropertyByCountry = async (req, res, next) => {
+  try {
+    const { country } = req.params;
+    const propertiesCollection = firestore.collection("propertiesToRent");
+    const propertySnapshot = await propertiesCollection
+      .where("location.country", "==", country)
+      .get();
+
+    if (propertySnapshot.empty) {
+      res.status(404).send("Property with the given country not found !");
+    } else {
+      let propertyByCountry = [];
+      propertySnapshot.forEach((doc) => {
+        propertyByCountry.push(doc.data());
+      });
+      console.log("property from db:", propertyByCountry);
+      res.send(propertyByCountry);
+    }
+  } catch (error) {
+    res.status(404).send(error.message);
   }
 };
 
@@ -90,6 +123,7 @@ module.exports = {
   addPropertyToRent,
   getAllPropertiesToRent,
   getPropertyToRent,
+  getPropertyByCountry,
   updatePropertyToRent,
   deletePropertyToRent,
 };

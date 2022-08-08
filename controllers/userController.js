@@ -1,7 +1,7 @@
 "use strict";
 
 const firebase = require("../db");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const firestore = firebase.firestore();
 
@@ -9,7 +9,7 @@ const addUser = async (req, res, next) => {
   try {
     const data = req.body;
     await firestore.collection("users").doc().set(data);
-    const id = req.params.id
+    const id = req.params.id;
     // res.send("User saved successfuly");
     res.status(201).json({
       id: data.id,
@@ -18,8 +18,8 @@ const addUser = async (req, res, next) => {
       email: data.email,
       phoneNumber: data.phoneNumber,
       birthdate: data.birthdate,
-      token: generateToken(data.id)
-    })
+      token: generateToken(data.id),
+    });
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -41,7 +41,7 @@ const getAllUsers = async (req, res, next) => {
           doc.data().email,
           doc.data().birthdate,
           doc.data().phoneNumber,
-          doc.data().password,
+          doc.data().password
         );
         usersArray.push(user);
       });
@@ -64,6 +64,27 @@ const getUser = async (req, res, next) => {
     }
   } catch (error) {
     res.status(400).send(error.message);
+  }
+};
+
+const getUserByEmail = async (req, res, next) => {
+  try {
+    const email = req.params.email;
+    const usersCollection = firestore.collection("users");
+    const userSnapshot = await usersCollection
+      .where("email", "==", email)
+      .get();
+
+    if (userSnapshot.empty) {
+      res.status(404).send("User with the given email not found !");
+    } else {
+      let user;
+      userSnapshot.forEach((doc) => (user = { ...doc.data() }));
+      console.log("user from db:", user);
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(404).send(error.message);
   }
 };
 
@@ -91,9 +112,9 @@ const deleteUser = async (req, res, next) => {
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  })
-}
+    expiresIn: "30d",
+  });
+};
 
 module.exports = {
   addUser,
@@ -101,4 +122,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getUserByEmail,
 };
