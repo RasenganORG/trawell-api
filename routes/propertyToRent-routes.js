@@ -3,16 +3,20 @@ const {
   addPropertyToRent,
   getAllPropertiesToRent,
   getPropertyToRent,
-  getPropertyByCountry,
+  getPropertyByCountryCity,
   updatePropertyToRent,
   deletePropertyToRent,
+  getPropertyAvailable,
+  getPropertyByCountry,
 } = require("../controllers/propertyToRentController");
 
 const router = express.Router();
 
 router.post("/propertyToRent", addPropertyToRent);
 router.get("/propertiesToRent", getAllPropertiesToRent);
-router.get("/propertiesToRent/:country", getPropertyByCountry);
+router.get("/properties", getPropertyByCountryCity);
+router.get("/country/:country", getPropertyByCountry);
+router.get("/available", getPropertyAvailable);
 router.get("/propertiesToRent/:id", getPropertyToRent);
 router.put("/propertiesToRent/:id", updatePropertyToRent);
 router.delete("/propertiesToRent/:id", deletePropertyToRent);

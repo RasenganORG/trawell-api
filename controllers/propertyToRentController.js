@@ -4,6 +4,16 @@ const firebase = require("../db");
 const PropertyToRent = require("../models/propertyToRent");
 const firestore = firebase.firestore();
 
+// const orderByDates = firebase
+//   .database()
+//   .ref()
+//   .child("propertiesToRent")
+//   .orderByChild("regdate")
+//   .startAt("05-08-2022")
+//   .endAt("10.10.2023");
+
+// console.log(orderByDates);
+
 const addPropertyToRent = async (req, res, next) => {
   try {
     const data = req.body;
@@ -55,7 +65,30 @@ const getAllPropertiesToRent = async (req, res, next) => {
   }
 };
 
-const getPropertyToRent = async (req, res, next) => {
+const getPropertyByCountry = async (req, res, next) => {
+  try {
+    const { country } = req.params;
+    const propertiesCollection = firestore.collection("propertiesToRent");
+    const propertySnapshot = await propertiesCollection
+      .where("location.country", "==", country)
+      .get();
+
+    if (propertySnapshot.empty) {
+      res.status(404).send("Property with the given country not found !");
+    } else {
+      let propertyByCountry = [];
+      propertySnapshot.forEach((doc) => {
+        propertyByCountry.push({ ...doc.data(), id: doc.id });
+      });
+      console.log("property from db:", propertyByCountry);
+      res.send(propertyByCountry);
+    }
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+};
+
+const getPropertyToRent = async (req, res) => {
   try {
     const id = req.params.id;
     const propertyToRent = await firestore
@@ -72,28 +105,56 @@ const getPropertyToRent = async (req, res, next) => {
   }
 };
 
-const getPropertyByCountry = async (req, res, next) => {
+const getPropertyByCountryCity = async (req, res) => {
   try {
-    const { country } = req.params;
+    const { country, city } = req.query;
+    console.log(country, city);
     const propertiesCollection = firestore.collection("propertiesToRent");
     const propertySnapshot = await propertiesCollection
       .where("location.country", "==", country)
+      .where("location.city", "==", city)
       .get();
 
     if (propertySnapshot.empty) {
-      res.status(404).send("Property with the given country not found !");
+      res.status(404).send("Property with the given data not found !");
     } else {
-      let propertyByCountry = [];
+      let property = [];
       propertySnapshot.forEach((doc) => {
-        propertyByCountry.push(doc.data());
+        property.push(doc.data());
       });
-      console.log("property from db:", propertyByCountry);
-      res.send(propertyByCountry);
+      console.log("property from db:", property);
+      res.send(property);
     }
   } catch (error) {
     res.status(404).send(error.message);
   }
 };
+
+const getPropertyAvailable = async (req, res) => {
+  console.log(req.query);
+};
+//   try {
+//     const { availableFrom, availableTo } = req.query;
+//     const propertiesCollection = firestore.collection("propertiesToRent");
+//     const propertySnapshot = await propertiesCollection
+//       .where("location.availableFrom", ">=", availableFrom)
+//       .where("location.availableTo", "<=", availableTo)
+//       .get();
+
+//     if (propertySnapshot.empty) {
+//       res.status(404).send("Property with the given dates not found !");
+//     } else {
+//       let propertyByDates = [];
+//       propertySnapshot.forEach((doc) => {
+//         propertyByDates.push(doc.data());
+//       });
+//       console.log("property from db:", propertyByDates);
+//       res.send(propertyByDates);
+//     }
+//   } catch (error) {
+//     res.status(404).send(error.message);
+//   }
+// };
 
 const updatePropertyToRent = async (req, res, next) => {
   try {
@@ -123,7 +184,9 @@ module.exports = {
   addPropertyToRent,
   getAllPropertiesToRent,
   getPropertyToRent,
-  getPropertyByCountry,
+  getPropertyByCountryCity,
   updatePropertyToRent,
   deletePropertyToRent,
+  getPropertyAvailable,
+  getPropertyByCountry,
 };
