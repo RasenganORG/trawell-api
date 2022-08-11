@@ -79,7 +79,7 @@ const getUserByEmail = async (req, res, next) => {
       res.status(404).send("User with the given email not found !");
     } else {
       let user;
-      userSnapshot.forEach((doc) => (user = { ...doc.data() }));
+      userSnapshot.forEach((doc) => (user = { ...doc.data(), id: doc.id }));
       console.log("user from db:", user);
       res.send(user);
     }

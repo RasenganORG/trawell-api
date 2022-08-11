@@ -4,16 +4,6 @@ const firebase = require("../db");
 const PropertyToRent = require("../models/propertyToRent");
 const firestore = firebase.firestore();
 
-// const orderByDates = firebase
-//   .database()
-//   .ref()
-//   .child("propertiesToRent")
-//   .orderByChild("regdate")
-//   .startAt("05-08-2022")
-//   .endAt("10.10.2023");
-
-// console.log(orderByDates);
-
 const addPropertyToRent = async (req, res, next) => {
   try {
     const data = req.body;
