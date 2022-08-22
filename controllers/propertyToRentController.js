@@ -33,6 +33,7 @@ const getAllPropertiesToRent = async (req, res, next) => {
       data.forEach((doc) => {
         const propertieToRent = new PropertyToRent(
           doc.id,
+          doc.data().userId,
           doc.data().rating,
           doc.data().placeType,
           doc.data().propertyType,
@@ -72,6 +73,29 @@ const getPropertyByCountry = async (req, res, next) => {
       });
       console.log("property from db:", propertyByCountry);
       res.send(propertyByCountry);
+    }
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+};
+
+const getPropertyByUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const propertiesCollection = firestore.collection("propertiesToRent");
+    const propertySnapshot = await propertiesCollection
+      .where("userId", "==", userId)
+      .get();
+
+    if (propertySnapshot.empty) {
+      res.status(404).send("Property with the given userId not found !");
+    } else {
+      let propertyByUserId = [];
+      propertySnapshot.forEach((doc) => {
+        propertyByUserId.push({ ...doc.data(), id: doc.id });
+      });
+      console.log("property from db:", propertyByUserId);
+      res.send(propertyByUserId);
     }
   } catch (error) {
     res.status(404).send(error.message);
@@ -179,4 +203,5 @@ module.exports = {
   deletePropertyToRent,
   getPropertyAvailable,
   getPropertyByCountry,
+  getPropertyByUserId,
 };

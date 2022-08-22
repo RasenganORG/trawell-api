@@ -2,19 +2,25 @@ class Bookings {
   constructor(
     id,
     userId,
-    locationId,
+    roomId,
     startDate,
     endDate,
     numberOfTrawellers,
-    price
+    price,
+    country,
+    city,
+    photo
   ) {
     this.id = id;
     this.userId = userId;
-    this.locationId = locationId;
+    this.roomId = roomId;
     this.startDate = startDate;
     this.endDate = endDate;
     this.numberOfTrawellers = numberOfTrawellers;
     this.price = price;
+    this.country = country;
+    this.city = city;
+    this.photo = photo;
   }
 }
 

@@ -1,6 +1,7 @@
 class PropertyToRent {
   constructor(
     id,
+    userId,
     rating,
     placeType,
     propertyType,
@@ -15,6 +16,7 @@ class PropertyToRent {
     photos
   ) {
     this.id = id;
+    this.userId = userId;
     this.rating = rating;
     this.placeType = placeType;
     this.propertyType = propertyType;

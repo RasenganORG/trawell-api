@@ -30,11 +30,14 @@ const getAllBookings = async (req, res, next) => {
         const booking = new Bookings(
           doc.id,
           doc.data().userId,
-          doc.data().locationId,
+          doc.data().roomId,
           doc.data().startDate,
           doc.data().endDate,
           doc.data().numberOfTrawellers,
-          doc.data().price
+          doc.data().price,
+          doc.data().country,
+          doc.data().city,
+          doc.data().photo
         );
         bookingsArray.push(booking);
       });
