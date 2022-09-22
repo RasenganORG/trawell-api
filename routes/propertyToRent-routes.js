@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.post("/propertyToRent", addPropertyToRent);
-router.get("/propertiesToRent", getAllPropertiesToRent);
+router.get("/allRooms/:userId", getAllPropertiesToRent);
 router.get("/properties/:userId", getPropertyByUserId);
 router.get("/available", searchProperties);
 router.get("/propertiesToRent/:id", getPropertyToRent);

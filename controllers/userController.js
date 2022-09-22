@@ -19,6 +19,7 @@ const addUser = async (req, res, next) => {
       phoneNumber: data.phoneNumber,
       birthdate: data.birthdate,
       token: generateToken(data.id),
+      password: data.password,
     });
   } catch (error) {
     res.status(400).send(error.message);
@@ -70,24 +71,29 @@ const getUser = async (req, res, next) => {
 const getUserByEmail = async (req, res, next) => {
   try {
     const email = req.params.email;
+    const pwd = req.query.pwd;
     const usersCollection = firestore.collection("users");
     const userSnapshot = await usersCollection
       .where("email", "==", email)
       .get();
 
     if (userSnapshot.empty) {
-      res.status(404).send("User with the given email not found !");
+      res.status(404).send("User with the given email not found!");
     } else {
       let user;
+
       userSnapshot.forEach((doc) => (user = { ...doc.data(), id: doc.id }));
       console.log("user from db:", user);
-      res.send(user);
+
+      const result = user.password === pwd ? user : null;
+
+      if (result) res.send(result);
+      else res.status(404).send("Username or password invalid!");
     }
   } catch (error) {
     res.status(404).send(error.message);
   }
 };
-
 const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id;

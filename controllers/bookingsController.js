@@ -1,5 +1,5 @@
 "use strict";
-
+const moment = require("moment");
 const firebase = require("../db");
 const Bookings = require("../models/bookings");
 const firestore = firebase.firestore();
@@ -48,7 +48,51 @@ const getAllBookings = async (req, res, next) => {
   }
 };
 
+const getBookingsByUserID = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const bookings = firestore.collection("bookings");
+    const bookingsSnapshot = await bookings.where("userId", "==", userId).get();
+    if (bookingsSnapshot.empty) {
+      res.status(404).send("Booking with this user ID was not found!");
+    } else {
+      const pastBookings = [];
+      const futureBookings = [];
+      bookingsSnapshot.forEach((doc) => {
+        const isFuture = moment(doc.data().startDate).isAfter(moment());
+        console.log(isFuture);
+        if (isFuture) {
+          futureBookings.push({ ...doc.data(), id: doc.id, isFuture: true });
+        } else {
+          pastBookings.push({ ...doc.data(), id: doc.id, isFuture: false });
+        }
+      });
+      console.log("past bookings", pastBookings);
+      pastBookings.sort((a, b) =>
+        moment(a.startDate).isAfter(moment(b.startDate))
+          ? -1
+          : moment(a.startDate).isBefore(moment(b.startDate))
+          ? 1
+          : 0
+      );
+      console.log(pastBookings);
+      futureBookings.sort((a, b) =>
+        moment(a.startDate).isAfter(moment(b.startDate))
+          ? 1
+          : moment(a.startDate).isBefore(moment(b.startDate))
+          ? -1
+          : 0
+      );
+      console.log(futureBookings);
+      res.send([...futureBookings, ...pastBookings]);
+    }
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+};
+
 module.exports = {
   addBooking,
   getAllBookings,
+  getBookingsByUserID,
 };

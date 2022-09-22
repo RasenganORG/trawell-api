@@ -28,7 +28,6 @@ class PropertyToRent {
     this.bathroomPrivate = bathroomPrivate;
     this.location = location;
     this.amenities = amenities;
-    this.photos = photos;
   }
 }
 
