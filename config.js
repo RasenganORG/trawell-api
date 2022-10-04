@@ -15,6 +15,9 @@ const {
   STORAGE_BUCKET,
   MESSAGING_SENDER_ID,
   APP_ID,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+  CLOUDINARY_NAME,
 } = process.env;
 
 assert(PORT, "PORT is required");
@@ -32,5 +35,10 @@ module.exports = {
     storageBucket: STORAGE_BUCKET,
     messagingSenderId: MESSAGING_SENDER_ID,
     appId: APP_ID,
+  },
+  cloudinaryConfig: {
+    api_key: CLOUDINARY_API_KEY,
+    api_secret: CLOUDINARY_API_SECRET,
+    cloud_name: CLOUDINARY_NAME,
   },
 };

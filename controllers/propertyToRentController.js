@@ -5,6 +5,7 @@ const firebase = require("../db");
 const Like = require("../models/like");
 const PropertyToRent = require("../models/propertyToRent");
 const firestore = firebase.firestore();
+const cloudinary = require("cloudinary").v2;
 
 const getAllPropertiesToRent = async (req, res, next) => {
   try {
@@ -43,7 +44,8 @@ const getAllPropertiesToRent = async (req, res, next) => {
         doc.data().numberOfBathrooms,
         doc.data().bathroomPrivate,
         doc.data().location,
-        doc.data().amenities
+        doc.data().amenities,
+        doc.data().images
       );
       const findLike = userLikesArray.filter((like) => like.roomId === doc.id);
       const numberLikes = likesArray.filter(
@@ -59,12 +61,39 @@ const getAllPropertiesToRent = async (req, res, next) => {
   }
 };
 
+const upload = async (image) => {
+  try {
+    const options = {
+      use_filename: false,
+      unique_filename: true,
+      overwrite: true,
+      resource_type: "auto",
+    };
+    console.log({ image });
+    const result = await cloudinary.uploader.upload(image, {
+      upload_preset: "trawell_preset",
+    });
+    console.log({ result });
+    console.log("result.secure_url", result.secure_url);
+    return result.secure_url;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 const addPropertyToRent = async (req, res, next) => {
   try {
     const data = req.body;
+    let imageUrl = [];
+
+    for (const file of data.images) {
+      const newPath = await upload(file);
+      imageUrl.push(newPath);
+    }
     const property = {
       ...data,
       id: firestore.collection("propertiesToRent").doc().id,
+      images: imageUrl,
     };
     await firestore
       .collection("propertiesToRent")
@@ -182,7 +211,8 @@ const searchProperties = async (req, res) => {
           doc.data().numberOfBathrooms,
           doc.data().bathroomPrivate,
           doc.data().location,
-          doc.data().amenities
+          doc.data().amenities,
+          doc.data().images
         );
         const findLike = userLikesArray.filter(
           (like) => like.roomId === doc.id

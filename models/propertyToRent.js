@@ -13,7 +13,7 @@ class PropertyToRent {
     bathroomPrivate,
     location,
     amenities,
-    photos
+    images
   ) {
     this.id = id;
     this.userId = userId;
@@ -28,6 +28,7 @@ class PropertyToRent {
     this.bathroomPrivate = bathroomPrivate;
     this.location = location;
     this.amenities = amenities;
+    this.images = images;
   }
 }
 
